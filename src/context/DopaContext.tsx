@@ -65,18 +65,24 @@ export const DopaProvider = ({ children }: { children: ReactNode }) => {
 
     const fetchUserProfile = async (userId: string) => {
         setLoading(true);
-        const [profile, userTasks] = await Promise.all([
-            UserService.getUser(userId),
-            TaskService.getUserTasks(userId)
-        ]);
+        try {
+            const [profile, userTasks] = await Promise.all([
+                UserService.getUser(userId),
+                TaskService.getUserTasks(userId)
+            ]);
 
-        if (profile) {
-            setUser(profile);
-            setTasks(userTasks);
-        } else {
-            setUser(GUEST_USER);
+            if (profile) {
+                setUser(profile);
+                setTasks(userTasks || []);
+            } else {
+                setUser(GUEST_USER);
+            }
+        } catch (error) {
+            console.error("Critical Error fetching user profile:", error);
+            setUser(GUEST_USER); // Fallback to guest to prevent white screen
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const refreshUser = async () => {
