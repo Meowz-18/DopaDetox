@@ -10,6 +10,8 @@ import Onboarding from './pages/Onboarding';
 import Login from './pages/Login';
 import { DopaProvider } from './context/DopaContext';
 
+import { ErrorBoundary } from './components/ErrorBoundary';
+
 function App() {
   return (
     <DopaProvider>
@@ -17,9 +19,17 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
-            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="dashboard" element={
+              <ErrorBoundary>
+                <Dashboard />
+              </ErrorBoundary>
+            } />
             <Route path="activities" element={<Activities />} />
-            <Route path="profile" element={<Profile />} />
+            <Route path="profile" element={
+              <ErrorBoundary>
+                <Profile />
+              </ErrorBoundary>
+            } />
             <Route path="resources" element={<Resources />} />
             <Route path="onboarding" element={<Onboarding />} />
             <Route path="login" element={<Login />} />
