@@ -5,10 +5,42 @@ import { BookOpen, Video, Download, Mail, ChevronRight, BrainCircuit, Heart } fr
 
 export default function Resources() {
     const articles = [
-        { title: "The Dopamine Detox Guide", category: "Guide", readTime: "5 min", icon: <BookOpen size={24} />, color: "text-primary", bg: "bg-primary/10" },
-        { title: "Why You Feel Empty", category: "Neuroscience", readTime: "8 min", icon: <BrainCircuit size={24} />, color: "text-secondary", bg: "bg-secondary/10" },
-        { title: "Gen Z's Secret Weapon", category: "Stories", readTime: "4 min video", icon: <Video size={24} />, color: "text-accent", bg: "bg-accent/10" },
-        { title: "Self-Care vs Self-Indulgence", category: "Wellness", readTime: "6 min", icon: <Heart size={24} />, color: "text-pink-500", bg: "bg-pink-500/10" },
+        {
+            title: "Control Your Dopamine",
+            category: "Podcast",
+            readTime: "2 hr",
+            icon: <BookOpen size={24} />,
+            color: "text-primary",
+            bg: "bg-primary/10",
+            link: "https://www.hubermanlab.com/episode/dopamine-motivation-and-drive"
+        },
+        {
+            title: "Dopamine Nation",
+            category: "Book Summary",
+            readTime: "15 min",
+            icon: <BrainCircuit size={24} />,
+            color: "text-secondary",
+            bg: "bg-secondary/10",
+            link: "https://www.amazon.com/Dopamine-Nation-Finding-Balance-Indulgence/dp/152474672X"
+        },
+        {
+            title: "The Pleasure Trap",
+            category: "Video",
+            readTime: "12 min",
+            icon: <Video size={24} />,
+            color: "text-accent",
+            bg: "bg-accent/10",
+            link: "https://www.youtube.com/watch?v=QmOF0crdyRU"
+        },
+        {
+            title: "Atomic Habits",
+            category: "Guide",
+            readTime: "10 min",
+            icon: <Heart size={24} />,
+            color: "text-pink-500",
+            bg: "bg-pink-500/10",
+            link: "https://jamesclear.com/atomic-habits"
+        },
     ];
 
     return (
@@ -37,14 +69,19 @@ export default function Resources() {
                     <h2 className="text-3xl font-display font-bold text-white mb-8">Latest Knowledge</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {articles.map((art, i) => (
-                            <Card key={i} hover className="p-6 md:p-8 cursor-pointer group glass-panel border-zinc-800/50">
+                            <Card
+                                key={i}
+                                hover
+                                className="p-6 md:p-8 cursor-pointer group glass-panel border-zinc-800/50"
+                                onClick={() => window.open(art.link, '_blank')}
+                            >
                                 <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 ${art.bg} ${art.color} group-hover:scale-110 transition-transform`}>
                                     {art.icon}
                                 </div>
                                 <div className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">{art.category} • {art.readTime}</div>
                                 <h3 className="text-xl font-bold text-white mb-4 group-hover:text-primary transition-colors">{art.title}</h3>
                                 <div className="flex items-center text-primary font-medium text-sm mt-auto opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0">
-                                    Read Article <ChevronRight size={16} />
+                                    View Resource <ChevronRight size={16} />
                                 </div>
                             </Card>
                         ))}
