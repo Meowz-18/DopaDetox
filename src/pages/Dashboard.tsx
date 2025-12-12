@@ -17,18 +17,28 @@ export default function Dashboard() {
     const [showConfetti, setShowConfetti] = useState(false);
     const { user, activities, completeActivity, loading } = useDopa();
 
-    if (loading || !user) {
-        return <div className="min-h-screen flex items-center justify-center text-zinc-500">Initializing Protocol...</div>;
-    }
-
     // Filter for "Daily" tasks - just grabbing the first 3 for demo
-    const dailyTasks = activities.slice(0, 3).map(a => ({
+    // We compute this safely even if loading (activities default to empty array or we handle it)
+    const dailyTasks = activities ? activities.slice(0, 3).map(a => ({
         ...a,
         icon: a.type === 'Creative' ? <Flame className="text-amber-400" /> : a.type === 'Active' ? <Droplets className="text-sky-400" /> : <Zap className="text-primary" />, // Simple icon mapping
         completed: false // in a real app, check if completed today
-    }));
+    })) : [];
 
+    // HOOKS MUST BE TOP LEVEL
     const [tasks, setTasks] = useState(dailyTasks);
+
+    // Effect to update tasks when activities load
+    useEffect(() => {
+        if (activities && activities.length > 0) {
+            const mapped = activities.slice(0, 3).map(a => ({
+                ...a,
+                icon: a.type === 'Creative' ? <Flame className="text-amber-400" /> : a.type === 'Active' ? <Droplets className="text-sky-400" /> : <Zap className="text-primary" />,
+                completed: false
+            }));
+            setTasks(mapped);
+        }
+    }, [activities]);
 
     const handleComplete = (id: string) => {
         const task = tasks.find(t => t.id === id);
@@ -42,6 +52,10 @@ export default function Dashboard() {
             completeActivity(id);
         }
     };
+
+    if (loading || !user) {
+        return <div className="min-h-screen flex items-center justify-center text-zinc-500">Initializing Protocol...</div>;
+    }
 
     return (
         <div className="min-h-screen text-zinc-100 px-4 md:px-6 lg:px-8 pt-8 pb-24">
