@@ -12,6 +12,7 @@ import { useWindowSize } from 'react-use';
 import { useDopa } from '@/context/DopaContext';
 
 export default function Dashboard() {
+    console.log("Dashboard v2.0 Loaded - Hook Fix Applied");
     const navigate = useNavigate();
     const { width, height } = useWindowSize();
     const [showConfetti, setShowConfetti] = useState(false);

@@ -30,7 +30,7 @@ export class ErrorBoundary extends Component<Props, State> {
             return (
                 <div className="min-h-screen flex items-center justify-center bg-black text-white p-4">
                     <Card className="p-8 max-w-md w-full glass-panel neon-border text-center">
-                        <h1 className="text-2xl font-bold mb-4 text-red-500">System Malfunction</h1>
+                        <h1 className="text-2xl font-bold mb-4 text-red-500">System Malfunction (v2.0)</h1>
                         <p className="text-zinc-400 mb-6">The dashboard encountered a critical error.</p>
                         <div className="bg-zinc-900 p-4 rounded-lg mb-6 text-left overflow-auto max-h-48 text-xs font-mono text-red-400">
                             {this.state.error?.toString()}
