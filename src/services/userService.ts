@@ -25,10 +25,10 @@ export const UserService = {
 
             return {
                 name: data.username || 'User',
-                xp: data.xp,
-                level: data.level,
-                streak: data.streak,
-                dopamineScore: data.dopamine_score,
+                xp: data.xp || 0,
+                level: data.level || 1,
+                streak: data.streak || 0,
+                dopamineScore: data.dopamine_score || 50,
                 avatarUrl: data.avatar_url,
                 badges: ['🌱', '🔥'], // Mock badges
                 nextLevelXp: 5000 // Mock next level

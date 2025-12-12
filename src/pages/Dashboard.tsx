@@ -17,25 +17,8 @@ export default function Dashboard() {
     const [showConfetti, setShowConfetti] = useState(false);
     const { user, activities, completeActivity, loading } = useDopa();
 
-    if (loading) {
-        return (
-            <div className="min-h-screen flex flex-col items-center justify-center bg-zinc-950 text-emerald-500 gap-4">
-                <div className="w-8 h-8 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin"></div>
-                <p className="font-mono text-sm animate-pulse">Initializing Protocol...</p>
-            </div>
-        );
-    }
-
-    if (!user) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-zinc-950 text-red-500">
-                <div className="text-center">
-                    <h2 className="text-xl font-bold mb-2">System Failure</h2>
-                    <p className="text-zinc-500 mb-4">Could not load user profile.</p>
-                    <button onClick={() => window.location.reload()} className="px-4 py-2 bg-zinc-800 rounded text-white hover:bg-zinc-700">Retry Connection</button>
-                </div>
-            </div>
-        );
+    if (loading || !user) {
+        return <div className="min-h-screen flex items-center justify-center text-zinc-500">Initializing Protocol...</div>;
     }
 
     // Filter for "Daily" tasks - just grabbing the first 3 for demo
