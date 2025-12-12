@@ -57,8 +57,12 @@ export function Header() {
                     {session ? (
                         <div className="flex items-center gap-4">
                             <button onClick={handleLogout} className="text-zinc-400 hover:text-white text-sm">Logout</button>
-                            <NavLink to="/profile" className="w-10 h-10 rounded-full bg-gradient-to-r from-emerald-400 to-sky-400 flex items-center justify-center text-white font-bold shadow-md hover:shadow-lg transition-all transform hover:scale-105">
-                                {user?.name?.substring(0, 2).toUpperCase() || 'US'}
+                            <NavLink to="/profile" className="w-10 h-10 rounded-full bg-gradient-to-r from-emerald-400 to-sky-400 flex items-center justify-center text-white font-bold shadow-md hover:shadow-lg transition-all transform hover:scale-105 overflow-hidden">
+                                {user?.avatarUrl ? (
+                                    <img src={user.avatarUrl} alt={user.name} className="w-full h-full object-cover" />
+                                ) : (
+                                    user?.name?.substring(0, 2).toUpperCase() || 'US'
+                                )}
                             </NavLink>
                         </div>
                     ) : (
@@ -105,8 +109,12 @@ export function Header() {
                             onClick={() => setIsMenuOpen(false)}
                             className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-white/5 text-zinc-400 transition-colors"
                         >
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-emerald-400 to-sky-400 flex items-center justify-center text-white font-bold shadow-md">
-                                US
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-emerald-400 to-sky-400 flex items-center justify-center text-white font-bold shadow-md overflow-hidden">
+                                {user?.avatarUrl ? (
+                                    <img src={user.avatarUrl} alt={user.name} className="w-full h-full object-cover" />
+                                ) : (
+                                    user?.name?.substring(0, 2).toUpperCase() || 'US'
+                                )}
                             </div>
                             <span className="font-medium text-white">User Profile</span>
                         </NavLink>
