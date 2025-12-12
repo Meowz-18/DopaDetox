@@ -1,15 +1,24 @@
 import React, { useState, useRef } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Share2, Download, Trophy, Lock, Upload, Loader2 } from 'lucide-react';
+import { Share2, Download, Trophy, Lock, Upload, Loader2, Camera, X, Check } from 'lucide-react';
 import { useDopa } from '@/context/DopaContext';
 import { supabase } from '@/lib/supabase';
 import { UserService } from '@/services/userService';
 import { User } from '@/types';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const PRESET_AVATARS = [
+    '/avatars/cyber-samurai.png',
+    '/avatars/zen-android.png',
+    '/avatars/neon-ninja.png',
+    '/avatars/digital-monk.png'
+];
 
 export default function Profile() {
     const { user, refreshUser } = useDopa();
     const [uploading, setUploading] = useState(false);
+    const [showAvatarSelection, setShowAvatarSelection] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     // Fallback data if user not loaded yet
@@ -50,23 +59,51 @@ export default function Profile() {
             }
 
             const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
+            await updateUserAvatar(data.publicUrl);
 
-            await UserService.saveUser(supabase.auth.getUser().then(u => u.data.user!.id) as any, { avatarUrl: data.publicUrl });
-            /* Note: getting ID via auth directly or passing via context is needed. 
-               Context user object doesn't have ID, maybe I should add ID to User type or fetch session.
-               Let's rely on refreshUser to pull latest.
-               Actually UserService.saveUser needs ID.
-               Let's grab session ID from supabase for now as quick fix.
-            */
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session) await UserService.saveUser(session.user.id, { avatarUrl: data.publicUrl });
-
-            await refreshUser();
         } catch (error: any) {
             alert(error.message);
         } finally {
             setUploading(false);
         }
+    };
+
+    const updateUserAvatar = async (url: string) => {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+            await UserService.saveUser(session.user.id, { avatarUrl: url });
+            await refreshUser();
+            setShowAvatarSelection(false);
+        }
+    };
+
+    const handleShare = async () => {
+        const shareData = {
+            title: 'DopaDetox Profile',
+            text: `I'm a Level ${displayUser.level} Reality Bender on DopaDetox! Check out my progress.`,
+            url: window.location.href
+        };
+
+        try {
+            if (navigator.share) {
+                await navigator.share(shareData);
+            } else {
+                await navigator.clipboard.writeText(`DopaDetox: Level ${displayUser.level} ${displayUser.name}`);
+                alert("Profile stats copied to clipboard!");
+            }
+        } catch (err) {
+            console.error('Error sharing:', err);
+        }
+    };
+
+    const handleExport = () => {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(displayUser, null, 2));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", "dopadetox_profile.json");
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
     };
 
     return (
@@ -75,26 +112,74 @@ export default function Profile() {
 
                 {/* Left Col: Avatar & Identity */}
                 <div className="lg:col-span-1 space-y-6">
-                    <Card className="p-6 text-center glass-panel neon-border">
-                        <div className="relative w-48 h-48 mx-auto mb-6 rounded-full p-1 border-2 border-primary/50 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
-                            <img
-                                src={displayUser.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${displayUser.name}&backgroundColor=transparent`}
-                                className="w-full h-full rounded-full bg-zinc-800 object-cover"
-                                alt="Avatar"
-                            />
-                            <div className="absolute bottom-2 right-2">
-                                <input
-                                    type="file"
-                                    id="avatar-upload"
-                                    className="hidden"
-                                    accept="image/*"
-                                    onChange={handleUpload}
-                                    disabled={uploading}
+                    <Card className="p-6 text-center glass-panel neon-border relative z-10">
+                        <div className="relative w-48 h-48 mx-auto mb-6 group">
+                            <div className="w-full h-full rounded-full p-1 border-2 border-primary/50 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
+                                <img
+                                    src={displayUser.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${displayUser.name}&backgroundColor=transparent`}
+                                    className="w-full h-full rounded-full bg-zinc-800 object-cover"
+                                    alt="Avatar"
                                 />
-                                <label htmlFor="avatar-upload" className="cursor-pointer p-3 bg-zinc-900 border border-zinc-700 text-white rounded-full hover:scale-110 transition-transform hover:border-primary flex items-center justify-center">
-                                    {uploading ? <Loader2 size={16} className="animate-spin" /> : '📷'}
-                                </label>
                             </div>
+
+                            {/* Avatar Edit Trigger */}
+                            <button
+                                onClick={() => setShowAvatarSelection(!showAvatarSelection)}
+                                className="absolute bottom-2 right-2 p-3 bg-zinc-900 border border-zinc-700 text-white rounded-full hover:scale-110 transition-transform hover:border-primary flex items-center justify-center shadow-lg"
+                            >
+                                {uploading ? <Loader2 size={16} className="animate-spin" /> : <Camera size={18} />}
+                            </button>
+
+                            {/* Avatar Selection Popover */}
+                            <AnimatePresence>
+                                {showAvatarSelection && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                        className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-72 bg-zinc-900/95 backdrop-blur-xl border border-zinc-700 p-4 rounded-2xl shadow-xl z-50"
+                                    >
+                                        <div className="flex justify-between items-center mb-3">
+                                            <span className="text-sm font-bold text-zinc-300">Select Avatar</span>
+                                            <button onClick={() => setShowAvatarSelection(false)}><X size={16} className="text-zinc-500 hover:text-white" /></button>
+                                        </div>
+
+                                        <div className="grid grid-cols-4 gap-2 mb-4">
+                                            {PRESET_AVATARS.map((avatar, i) => (
+                                                <button
+                                                    key={i}
+                                                    onClick={() => updateUserAvatar(avatar)}
+                                                    className="aspect-square rounded-full overflow-hidden border border-transparent hover:border-primary transition-all relative"
+                                                >
+                                                    <img src={avatar} className="w-full h-full object-cover" alt="Preset" />
+                                                    {displayUser.avatarUrl === avatar && (
+                                                        <div className="absolute inset-0 bg-primary/40 flex items-center justify-center">
+                                                            <Check size={12} className="text-white font-bold" />
+                                                        </div>
+                                                    )}
+                                                </button>
+                                            ))}
+                                        </div>
+
+                                        <div className="relative">
+                                            <input
+                                                type="file"
+                                                id="avatar-upload-popover"
+                                                className="hidden"
+                                                accept="image/*"
+                                                onChange={handleUpload}
+                                                disabled={uploading}
+                                            />
+                                            <label
+                                                htmlFor="avatar-upload-popover"
+                                                className="block w-full text-center py-2 text-xs font-medium bg-zinc-800 hover:bg-zinc-700 rounded-lg cursor-pointer transition-colors text-zinc-300 border border-zinc-700"
+                                            >
+                                                Upload Custom
+                                            </label>
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                         </div>
 
                         <h2 className="text-3xl font-display font-bold text-white mb-1">{displayUser.name}</h2>
@@ -108,8 +193,12 @@ export default function Profile() {
                         <p className="text-xs text-zinc-500 font-mono">{displayUser.xp} / {nextLevelXp} XP to Level {displayUser.level + 1}</p>
 
                         <div className="flex justify-center gap-4 mt-8">
-                            <Button size="sm" variant="outline" className="text-xs"><Share2 size={14} className="mr-2" /> Share</Button>
-                            <Button size="sm" variant="ghost" className="text-xs"><Download size={14} className="mr-2" /> Export</Button>
+                            <Button size="sm" variant="outline" className="text-xs" onClick={handleShare}>
+                                <Share2 size={14} className="mr-2" /> Share
+                            </Button>
+                            <Button size="sm" variant="ghost" className="text-xs" onClick={handleExport}>
+                                <Download size={14} className="mr-2" /> Export
+                            </Button>
                         </div>
                     </Card>
 
