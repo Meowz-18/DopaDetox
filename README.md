@@ -1,73 +1,119 @@
-# React + TypeScript + Vite
+# DopaDetox 🧠✨
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Your Companion for Digital Wellness and Dopamine Control.**
 
-Currently, two official plugins are available:
+DopaDetox is a modern web application designed to help you regain control over your attention span and habits. By tracking "low-dopamine" activities and visualizing your progress, this app aids in resetting your brain's reward system. Built with performance and user experience in mind using the latest web technologies.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## 🚀 Key Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+*   **📊 Interactive Dashboard**: Visualise your detox progress, streaks, and statistics with dynamic charts (powered by Chart.js).
+*   **🎯 Activity Tracking**: Log and manage curated activities designed to replace high-dopamine habits.
+*   **👤 User Profiles**: personalized settings and progress tracking protected by authentication.
+*   **📚 Educational Resources**: Access a library of resources to understand dopamine and habit formation.
+*   **🔐 Secure Authentication**: Powered by Supabase for reliable user management.
+*   **📱 PWA Support**: Installable on mobile and desktop devices for a native-like experience.
+*   **🎨 Modern UI/UX**: Built with Tailwind CSS and Framer Motion for a smooth, responsive, and beautiful interface.
 
-## Expanding the ESLint configuration
+## 🛠️ Technology Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+*   **Frontend Framework**: [React 19](https://react.dev/)
+*   **Language**: [TypeScript](https://www.typescriptlang.org/)
+*   **Build Tool**: [Vite](https://vitejs.dev/)
+*   **Styling**: [Tailwind CSS](https://tailwindcss.com/) & [clsx](https://github.com/lukeed/clsx)
+*   **Animations**: [Framer Motion](https://www.framer.com/motion/)
+*   **Routing**: [React Router v7](https://reactrouter.com/)
+*   **Backend / Database**: [Supabase](https://supabase.com/)
+*   **State Management**: React Context API
+*   **Icons**: [Lucide React](https://lucide.dev/)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 📂 Project Structure
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+A quick look at the top-level files and directories you'll encounter:
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+DopaDetox/
+├── src/
+│   ├── components/      # Reusable UI components (Layouts, Charts, etc.)
+│   ├── context/         # Global state management providers (UseDopaContext)
+│   ├── pages/           # Main route components (Dashboard, Home, Activities)
+│   ├── App.tsx          # Main application entry point & Routing setup
+│   └── main.tsx         # React root rendering
+├── deploy.bat           # Windows automation script for git push & deployment
+├── package.json         # Project dependencies and scripts
+├── .env                 # Environment variables (Supabase keys)
+└── vite.config.ts       # Vite configuration
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## ⚡ Getting Started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Follow these steps to set up the project locally on your machine.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Prerequisites
+
+*   [Node.js](https://nodejs.org/) (Latest LTS recommended)
+*   [Git](https://git-scm.com/)
+
+### Installation
+
+1.  **Clone the repository**
+    ```bash
+    git clone <repository-url>
+    cd DopaDetox
+    ```
+
+2.  **Install dependencies**
+    ```bash
+    npm install
+    ```
+
+3.  **Environment Setup**
+    Create a `.env` file in the root directory and add your Supabase credentials:
+    ```env
+    VITE_SUPABASE_URL=your_supabase_url
+    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+    ```
+
+4.  **Run the development server**
+    ```bash
+    npm run dev
+    ```
+    Open [http://localhost:5173](http://localhost:5173) to view it in the browser.
+
+## 📜 Scripts
+
+*   `npm run dev`: Starts the local development server.
+*   `npm run build`: Compiles the project for production (TypeScript check + Vite build).
+*   `npm run lint`: Runs ESLint to check for code quality and errors.
+*   `npm run preview`: Preview the production build locally.
+
+## 🚢 Deployment & Automation
+
+### `deploy.bat`
+The project includes a Windows Batch script (`deploy.bat`) to streamline the deployment process. This script automates the following git operations:
+1.  Checks `git status`.
+2.  Stages all changes (`git add .`).
+3.  Prompts for a commit message (defaults to "Auto-update").
+4.  Commits the changes.
+5.  Pushes to the `main` branch.
+
+**Usage:**
+Simply double-click `deploy.bat` or run it from the terminal:
+```bash
+./deploy.bat
 ```
+*Note: This push is configured to automatically trigger a deployment on Netlify.*
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1.  Fork the project
+2.  Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3.  Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4.  Push to the branch (`git push origin feature/AmazingFeature`)
+5.  Open a Pull Request
+
+---
+*Built with ❤️ by the Antigravity Team*
